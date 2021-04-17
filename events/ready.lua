@@ -37,4 +37,9 @@ return function(C, api)
     end
   end
   api:setMyCommands(a)
+
+  a = {'levels', }
+  for i = 1, #a do
+    if not C.db[a[i]] then C.db[a[i]] = {} end
+  end
 end

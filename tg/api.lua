@@ -26,6 +26,10 @@ function api:send(msg, txt, pmod, dwp, dnot, rtmid, rmp)
   pmod = (type(pmod) == 'boolean' and pmod == true) and 'markdown' or pmod
   if dwp == nil then dwp = true end
 
+  if txt and #txt > 4096 then
+    txt = txt:sub(0, 4092) .. '...'
+  end
+
   return self:request('sendMessage', {
     chat_id = msg,
     text = txt,

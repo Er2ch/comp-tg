@@ -38,14 +38,15 @@ function tools.req(url)
   return resp[1], true
 end
 
-function tools.requ(url)
+function tools.requ(url, dbg)
   local res, succ = tools.req(url)
+  if dbg then print(succ, res) end
   res = json.decode(res or '{}')
   if not succ or not res then return {}, false end
   return res, true
 end
 
-function tools.request(token, endpoint, param)
+function tools.request(token, endpoint, param, dbg)
   assert(token, 'Provide token!')
   assert(endpoint, 'Provide endpoint!')
 
@@ -57,7 +58,7 @@ function tools.request(token, endpoint, param)
   local url = 'https://api.telegram.org/bot' .. token .. '/' .. endpoint
   if #params > 1 then url = url .. '?' .. params:sub(2) end
 
-  local resp = tools.requ(url)
+  local resp = tools.requ(url, dbg)
   return resp, resp.ok or false
 end
 

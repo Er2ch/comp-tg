@@ -1,6 +1,7 @@
 ﻿local config = require 'config'
 
 local Core = {
+  db = require 'db.db' ('db'),
   tg = require 'tg',
   tools = tools,
   config = config,
@@ -30,16 +31,34 @@ function Core:load(what)
 end
 
 function Core:init()
-  self.api = tg(config.token)
-  self.config.token = nil
-  
-  print('Logged on as @' .. self.api.info.username)
+  self.api = tg {norun = true}
+
   print 'Client initialization...'
 
   self:load 'events'
 
+  self.api:login(config.token, function()
+    print('Logged on as @' .. self.api.info.username)
+    self.config.token = nil
+    self.api:onReady()
+  end)
+
   print 'Done!'
-  self.api:run()
+
+  local offs, o = 0
+  self.t = os.time()
+  self.api.runs = true
+  while self.api.runs do
+    o = self.api:_getUpd(1, offs, 0)
+    offs = o and o or offs
+
+    if os.time() - self.t >= 60 * 5 then
+      self.t = os.time()
+      print 'saving...'
+      self.db:save()
+    end
+  end
+  self.api:getUpdates(1, offs, 0)
 end
 
 Core:init()

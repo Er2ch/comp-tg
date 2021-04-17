@@ -20,7 +20,7 @@ function api.onQuery(_) end
 function api.onUpdate(_) end
 
 -- UPDATES --
-function api:getUpdates(tout, offs, lim, allowed)
+function api:getUpdates(lim, offs, tout, allowed)
   allowed = type(allowed) == 'table' and tools.json.encode(allowed) or allowed
   return self:request('getUpdates', {
     timeout = tout,
@@ -66,24 +66,29 @@ local function receiveUpdate(self, update)
   end
 end
 
-function api:_loop(lim, tout, offs, al)
-  while true do
-    local u, ok = self:getUpdates(tout, offs, lim, al)
-    if not ok or not u or (u and type(u) ~= 'table') or not u.result then goto f end
-    for _, v in pairs(u.result) do
-      offs = v.update_id + 1
-      receiveUpdate(self, v)
-    end
-    ::f::
+function api:_getUpd(lim, offs, ...)
+  local u, ok = self:getUpdates(lim, offs, ...)
+  if not ok or not u or (u and type(u) ~= 'table') or not u.result then return end
+  for _, v in pairs(u.result) do
+    offs = v.update_id + 1
+    receiveUpdate(self, v)
   end
-  self:getUpdates(tout, offs, lim, al)
+  return offs
+end
+
+function api:_loop(lim, offs, ...)
+  while api.runs do
+    local o = self:_getUpd(lim, offs, ...)
+    offs = o and o or offs
+  end
+  self:getUpdates(lim, offs, ...)
 end
 
 -- RUN --
-function api:run(lim, tout, offs, al)
+function api:run(lim, offs, tout, al)
   lim = tonumber(lim) or 1
-  tout = tonumber(tout) or 0
   offs = tonumber(offs) or 0
+  tout = tonumber(tout) or 0
 
   self.runs = true
   self:onReady()
@@ -94,17 +99,29 @@ end
 
 function api:destroy() self.runs = false end
 
-return function(token)
-  if not token or type(token) ~= 'string' then token = nil end
-  local self = setmetatable({}, api)
-  self.token = assert(token, 'Provide token!')
+function api:login(token, thn)
+  self.token = assert(token or self.token, 'Provide token!')
 
   repeat
-    local b,a = self:getMe()
-    if a then self.info = b end
+    local r, o = self:getMe()
+    if o and r then self.info = r end
   until (self.info or {}).result
 
   self.info = self.info.result
   self.info.name = self.info.first_name
+
+  if type(thn) == 'function' then thn(self) end
+
+  if not self.nr then self:run() end
+end
+
+return function(opts)
+  if not token or type(token) ~= 'string' then token = nil end
+  local self = setmetatable({}, api)
+  if not opts then return self end
+
+  if opts.token then self.token = opts.token end
+  if opts.norun then self.nr = true end
+
   return self
 end

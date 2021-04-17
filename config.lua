@@ -1,6 +1,6 @@
 return {
   token = 'atokenyanedam',
-  owner = 'Er2Official', -- hehe
+  owner = 935626920 , -- hehe
   cmds = {
     'eval',
     'rub',
