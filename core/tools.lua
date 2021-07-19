@@ -1,5 +1,10 @@
+--[[ Additional tools
+  -- (c) Er2 2021 <er2@dismail.de>
+  -- Zlib license
+--]]
+
 local tools = {
-  json = require 'tg.json',
+  json = require 'core.json',
 }
 
 local json = tools.json
@@ -7,11 +12,9 @@ local https = require 'ssl.https'
 local ltn12 = require 'ltn12'
 
 function tools.fetchCmd(text)
-  local cmd = text:match '/[%w_]+'
-  local to = text:match '/[%w_]+(@[%w_]+)'
-  if to then to = to:sub(2) end
-  if cmd then cmd = cmd:sub(2) end
-  return cmd, to
+  return
+    text:match '/([%w_]+)',       -- cmd
+    text:match '/[%w_]+@([%w_]+)' -- to
 end
 
 -- https://gist.github.com/liukun/f9ce7d6d14fa45fe9b924a3eed5c3d99
@@ -23,7 +26,14 @@ function tools.urlencode(url)
   return url
 end
 
-function tools.req(url)
+function tools.req(url, par)
+  if type(par) == 'table' then
+    url = url .. '?'
+    for k,v in pairs(par) do
+      url = url ..'&'.. k ..'='.. tools.urlencode(tostring(v))
+    end
+  end
+  
   local resp = {}
   local succ, res = https.request {
     url = url,
@@ -38,9 +48,9 @@ function tools.req(url)
   return resp[1], true
 end
 
-function tools.requ(url, dbg)
-  local res, succ = tools.req(url)
-  if dbg then print(succ, res) end
+function tools.requ(url, par, dbg)
+  local res, succ = tools.req(url, par)
+  if dbg then print(url, succ, res) end
   res = json.decode(res or '{}')
   if not succ or not res then return {}, false end
   return res, true
@@ -50,15 +60,10 @@ function tools.request(token, endpoint, param, dbg)
   assert(token, 'Provide token!')
   assert(endpoint, 'Provide endpoint!')
 
-  local params = ''
-  for k, v in pairs(param or {}) do
-    params = params .. '&' .. k .. '=' .. tools.urlencode(tostring(v))
-  end
-
   local url = 'https://api.telegram.org/bot' .. token .. '/' .. endpoint
-  if #params > 1 then url = url .. '?' .. params:sub(2) end
 
-  local resp = tools.requ(url, dbg)
+  -- dbg = true
+  local resp = tools.requ(url, param, dbg)
   return resp, resp.ok or false
 end
 

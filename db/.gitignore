@@ -1,4 +1,4 @@
 *
 !.gitignore
-!db.lua
+!init.lua
 !mp.lua

@@ -1,23 +1,19 @@
--- Core file
---- (c) Er2 <er2@dismail.de>
---- Zlib License
+--[[ Core file
+  -- (c) Er2 2021 <er2@dismail.de>
+  -- Zlib License
+--]]
 
-local tools = require 'tg.tools'
-local api = require 'tg.api'
-api.__index = api -- Make class
+local tools = require 'core.tools'
+local api = require 'core.api'
+api.__index = api
 
--- EVENT PROTOTYPES --
-function api.onCommand(_) end
-function api.onChannelPost(_) end
-function api.onChannelPostEdit(_) end
-function api.onMessage(_) end
-function api.onMessageEdit(_) end
-function api.onInlineResult(_) end
-function api.onPoll(_) end
-function api.onPollAnswer(_) end
-function api.onReady(_) end
-function api.onQuery(_) end
-function api.onUpdate(_) end
+function api:_ev(t, i, name, ...)
+  local v = t[i]
+  if v.name == name then
+    v.fn(self, ...)
+    if v.type == 'once' then table.remove(t, i) end
+  end
+end
 
 -- UPDATES --
 function api:getUpdates(lim, offs, tout, allowed)
@@ -31,7 +27,7 @@ function api:getUpdates(lim, offs, tout, allowed)
 end
 
 local function receiveUpdate(self, update)
-  if update then self:onUpdate(update) end
+  if update then self:emit('update', update) end
 
   if update.message then
     local txt = update.message.text
@@ -43,26 +39,27 @@ local function receiveUpdate(self, update)
 
       update.message.cmd = cmd
       update.message.args = args
-      return self:onCommand(update.message, update.message.chat.type)
+
+      return self:emit('command', update.message)
     elseif cmd then return end
 
-    self:onMessage(update.message, update.message.chat.type)
+    self:emit('message', update.message)
 
   elseif update.edited_message then
-    self:onMessageEdit(update.edited_message, update.edited_message.chat.type)
+    self:emit('messageEdit', update.edited_message)
 
-  elseif update.channel_post then self:onChannelPost(update.channel_post)
-  elseif update.edited_channel_post then self:onChannelPostEdit(update.edited_channel_post)
+  elseif update.channel_post then self:emit('channelPost', update.channel_post)
+  elseif update.edited_channel_post then self:emit('channelPostEdit', update.edited_channel_post)
 
-  elseif update.poll then self:onPoll(update.poll)
-  elseif update.poll_answer then self:onPollAnswer(update.poll_answer)
+  elseif update.poll then self:emit('poll', update.poll)
+  elseif update.poll_answer then self:emit('pollAnswer', update.poll_answer)
 
-  elseif update.callback_query then self:onQuery('callback', update.callback_query)
-  elseif update.inline_query then self:onQuery('inline', update.inline_query)
-  elseif update.shipping_query then self:onQuery('shipping', update.shipping_query)
-  elseif update.pre_checkout_query then self:onQuery('preCheckout', update.pre_checkout_query)
+  elseif update.callback_query then self:emit('callbackQuery', update.callback_query)
+  elseif update.inline_query then self:emit('inlineQuery', update.inline_query)
+  elseif update.shipping_query then self:emit('shippingQuery', update.shipping_query)
+  elseif update.pre_checkout_query then self:emit('preCheckoutQuery', update.pre_checkout_query)
 
-  elseif update.chosen_inline_result then self:onInlineResult(update.chosen_inline_result)
+  elseif update.chosen_inline_result then self:emit('inlineResult', update.chosen_inline_result)
   end
 end
 
@@ -91,7 +88,7 @@ function api:run(lim, offs, tout, al)
   tout = tonumber(tout) or 0
 
   self.runs = true
-  self:onReady()
+  self:emit('ready')
 
   self.co = coroutine.create(api._loop)
   coroutine.resume(self.co, self, lim, tout, offs, al)
@@ -117,6 +114,7 @@ end
 
 return function(opts)
   if not token or type(token) ~= 'string' then token = nil end
+
   local self = setmetatable({}, api)
   if not opts then return self end
 

@@ -8,7 +8,7 @@
 }
 
 function rub:course(wants, fmt)
-  local resp, succ = (require'tg.tools').requ(self.url)
+  local resp, succ = (require'core.tools').requ(self.url)
   if not succ then
     return {}, '[ошибка]', {}
   end

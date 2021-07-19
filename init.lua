@@ -1,8 +1,8 @@
 ﻿local config = require 'config'
 
 local Core = {
-  db = require 'db.db' ('db'),
-  tg = require 'tg',
+  db = require 'db' ('db'), -- db with name db
+  tg = require 'core',
   tools = tools,
   config = config,
   cmds = {},
@@ -14,20 +14,26 @@ function Core:load(what)
   local s = #c
   for i = 1, s do
     local v = c[i]
-    print(('Loading %s (%d / %d) %s...'):format(what:sub(0, -2), i, s, v))
-    if not pcall(require, what .. '.' .. v) then print 'fail'; goto f end
 
-    local a = require(what .. '.' .. v)
-    if what == 'events' then
-      self.api['on' .. v:sub(1, 1):upper() .. v:sub(2)] = function(...)
-        local succ = pcall(a, self, ...)
-        if not succ then print('event ' .. v .. ' was failed') end
+    print(('Loading %s (%d / %d) %s...'):format(what:sub(0, -2), i, s, v))
+    -- Lint
+    if pcall(require, what ..'.'.. v) then
+      local a=require(what ..'.'.. v)
+      if     what == 'events' then self.api:on(v, a)
+      elseif what == 'cmds'   then self.cmds[v] = a
       end
-    elseif what == 'cmds' then self.cmds[v] = a
-    end
-    ::f::
+    else print 'fail' end
   end
   print(('Loaded %d %s'):format(s, what))
+end
+
+function Core:ev(t, i, name, ...)
+  local v = t[i]
+  if v.name == name then
+    local succ = pcall(v.fn, self, ...)
+    if not succ then print('event "' .. name .. '" was failed') end
+    if v.type == 'once' then table.remove(t, i) end
+  end
 end
 
 function Core:init()
@@ -35,12 +41,17 @@ function Core:init()
 
   print 'Client initialization...'
 
+  self.api._ev = function(s, t, i, name, ...)
+    -- print(s, t, i, name)
+    self:ev(t, i, name, s, ...)
+  end
+
   self:load 'events'
 
   self.api:login(config.token, function()
     print('Logged on as @' .. self.api.info.username)
     self.config.token = nil
-    self.api:onReady()
+    self.api:emit('ready')
   end)
 
   print 'Done!'

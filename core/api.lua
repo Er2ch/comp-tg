@@ -1,13 +1,17 @@
--- API Library
---- (c) Er2 <er2@dismail.de>
---- Zlib License
+--[[ API Library
+  -- (c) Er2 2021 <er2@dismail.de>
+  -- Zlib License
+--]]
 
-local tools = require 'tg.tools'
-local json = require 'tg.json'
-local api = {
-  request = function(self, ...) return tools.request(self.token, ...) end,
-}
+local tools =require 'core.tools'
+local json = require 'core.json'
+local events=require 'core.events'
+local api = { _ev_ = {} }
 api.__index = api -- Make class
+
+events(api) -- inheritance
+
+function api:request(...) return tools.request(self.token, ...) end
 
 -- Getters without params
 
