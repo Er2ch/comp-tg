@@ -3,8 +3,8 @@
   -- Zlib License
 --]]
 
-local tools = require 'core.tools'
-local api = require 'core.api'
+local tools = require 'etc.api.tools'
+local api = require 'etc.api.api'
 api.__index = api
 
 function api:_ev(t, i, name, ...)
@@ -116,10 +116,10 @@ return function(opts)
   if not token or type(token) ~= 'string' then token = nil end
 
   local self = setmetatable({}, api)
-  if not opts then return self end
-
-  if opts.token then self.token = opts.token end
-  if opts.norun then self.nr = true end
+  if type(opts) == 'table' then
+    if opts.token then self.token = opts.token end
+    if opts.norun then self.nr = true end
+  end
 
   return self
 end

@@ -4,7 +4,7 @@
 --]]
 
 local tools = {
-  json = require 'core.json',
+  json = require 'etc.json',
 }
 
 local json = tools.json

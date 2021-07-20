@@ -29,9 +29,10 @@ function events:emit(name, ...)
   local t = self._ev_
   for i = 1, #t do
     local v = t[i] or {}
-    if  type(v) == 'table'
+    if  type(v)      == 'table'
+    and type(v.name) == 'string'
     and type(v.type) == 'string'
-    and type(v.fn) == 'function'
+    and type(v.fn)   == 'function'
     then self:_ev(t, i, name, ...) end
   end
 end

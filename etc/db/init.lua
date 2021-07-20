@@ -1,4 +1,4 @@
-local mp = require 'db.mp'
+local mp = require 'etc.db.mp'
 
 local tools = {
   isFile = function(path)

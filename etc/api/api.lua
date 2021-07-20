@@ -3,9 +3,9 @@
   -- Zlib License
 --]]
 
-local tools =require 'core.tools'
-local json = require 'core.json'
-local events=require 'core.events'
+local tools =require 'etc.api.tools'
+local json = require 'etc.json'
+local events=require 'etc.events'
 local api = { _ev_ = {} }
 api.__index = api -- Make class
 

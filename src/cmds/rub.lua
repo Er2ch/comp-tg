@@ -1,4 +1,8 @@
-﻿local rub = {
+-- It uses data from central bank of Russia
+--- and external service to get json from xml
+-- Privacy and security is unknown
+
+local rub = {
   url = 'https://api.factmaven.com/xml-to-json/?xml='
     .. 'https://www.cbr.ru/scripts/XML_daily.asp',
   fmt = function(v, fmt)
@@ -8,7 +12,7 @@
 }
 
 function rub:course(wants, fmt)
-  local resp, succ = (require'core.tools').requ(self.url)
+  local resp, succ = (require 'etc.api.tools').requ(self.url)
   if not succ then
     return {}, '[ошибка]', {}
   end
