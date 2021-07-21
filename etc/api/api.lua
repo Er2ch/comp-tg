@@ -6,12 +6,12 @@
 local tools =require 'etc.api.tools'
 local json = require 'etc.json'
 local events=require 'etc.events'
-local api = { _ev_ = {} }
+local api = {
+  request = function(s, ...) return tools.request(s.token, ...) end
+}
 api.__index = api -- Make class
 
 events(api) -- inheritance
-
-function api:request(...) return tools.request(self.token, ...) end
 
 -- Getters without params
 

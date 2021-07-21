@@ -13,13 +13,21 @@ and C is faster.
 
 [Alpine Linux](https://alpinelinux.org), root:
   * Enable community repo (in wiki)
+
   * Install: `apk add sudo git lua5.3 luarocks openssl-dev`
+
   * Install dependencies: `luarocks-5.3 install luasec`
+
   * Create user: `adduser user`
+
     setup sudo and login to user
 
   * Get repo: `git clone https://github.com/Er2ch/comp-tg`
+
     and `cd comp-tg`
+
   * Change token and owner in `config.lua`
+
     TODO: Use env instaed of config
+
   * Run: `lua5.3 init.lua`

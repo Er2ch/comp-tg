@@ -1,1 +1,1 @@
-require 'src.core.core'
+require 'src.parts.core'

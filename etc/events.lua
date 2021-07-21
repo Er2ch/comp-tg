@@ -37,4 +37,7 @@ function events:emit(name, ...)
   end
 end
 
-return function(t) return setmetatable(t, events) end
+return function(t)
+  t._ev_ = {}
+  return setmetatable(t, events)
+end
