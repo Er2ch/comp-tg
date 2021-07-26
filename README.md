@@ -6,6 +6,8 @@ but on Telegram.
 Bot uses an OOP-style of lua
 as [described on Wikipedia](https://is.gd/f0Vadk)
 
+Also, bot automatically detects language installed in the client.
+
 TODO: Rewrite core to C, [lua have C API](https://www.lua.org/manual/5.3/manual.html#4)
 and C is faster.
 

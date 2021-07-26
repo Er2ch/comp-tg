@@ -29,10 +29,11 @@ return function(C, api)
   C:load 'cmds'
   local a = {}
   for k, v in pairs(C.cmds) do
-    if not v.private then
+    if not (v.private or v.hide) then
+      local cmd = C.locale:get('cmds', k) or {}
       table.insert(a, {
         command = k,
-        description = (v.args and v.args .. ' - ' or '') .. v.desc or 'no description'
+        description = (cmd.args and cmd.args .. ' - ' or '') .. (cmd.desc or C.locale:get('cmds', 'not_des'))
       })
     end
   end

@@ -30,20 +30,24 @@ local function receiveUpdate(self, update)
   if update then self:emit('update', update) end
 
   if update.message then
-    local txt = update.message.text
-    local cmd, to = tools.fetchCmd(txt)
+    local msg = update.message
+    local cmd, to = tools.fetchCmd(msg.text or '')
     if cmd and (not to or to == self.info.username) then
+      -- need /cmd@bot in groups
+      if (msg.chat.type == 'group' or msg.chat.type == 'supergroup')
+       and not to then return end
+
       local args = {}
-      txt = txt:sub(#cmd + #(to or {}) + 3)
-      for s in txt:gmatch '%S+' do table.insert(args, s) end
+      txt = msg.text:sub(#cmd + #(to or {}) + 3)
+      for s in msg.text:gmatch '%S+' do table.insert(args, s) end
 
-      update.message.cmd = cmd
-      update.message.args = args
+      msg.cmd  = cmd
+      msg.args = args
 
-      return self:emit('command', update.message)
+      return self:emit('command', msg)
     elseif cmd then return end
 
-    self:emit('message', update.message)
+    self:emit('message', msg)
 
   elseif update.edited_message then
     self:emit('messageEdit', update.edited_message)

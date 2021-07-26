@@ -29,8 +29,6 @@ local env = {
 
 return {
   private = true,
-  args = '<code>',
-  desc = 'evaluates code',
   run = function(C, msg, owner)
     local s = ''
     local t = {

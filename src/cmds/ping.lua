@@ -1,6 +1,5 @@
 return {
-  desc = 'ping pong',
   run = function(C, msg)
-    C.api:send(msg, 'Pong! ' .. (os.time() - msg.date) .. 's')
+    C.api:send(msg, msg.loc.pat:format(os.time() - msg.date))
   end
 }

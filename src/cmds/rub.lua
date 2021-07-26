@@ -5,64 +5,56 @@
 local rub = {
   url = 'https://api.factmaven.com/xml-to-json/?xml='
     .. 'https://www.cbr.ru/scripts/XML_daily.asp',
-  fmt = function(v, fmt)
-    fmt = type(fmt) == 'string' and fmt or '%d %s = %f'
-    return fmt:format(v.Nominal, v.Name, v.Value:gsub(',', '.'))
-  end
+
+  tools = require 'etc.api.tools',
 }
 
-function rub:course(wants, fmt)
-  local resp, succ = (require 'etc.api.tools').requ(self.url)
-  if not succ then
-    return {}, '[ошибка]', {}
-  end
+function rub:course(wants)
+  local resp, succ = self.tools.requ(self.url)
+  if not succ then return 'err' end
 
   resp = resp.ValCurs
+  table.insert(resp.Valute, {
+    ID = 'R01000',
+    NumCode = '001',
+    CharCode = 'RUB',
+    Nominal = 1,
+    Name = 'Российский рубль',
+    Value = '1'
+  })
 
   wants = type(wants) == 'table' and wants or {}
   local r, founds = {}, {}
+
   for i = 1, #resp.Valute do
     local v = resp.Valute[i]
     if table.find(wants, v.CharCode) then
       table.insert(founds, v.CharCode)
-      table.insert(r, self.fmt(v, fmt))
+      table.insert(r, ('%d %s (%s) - %f ₽'):format(v.Nominal, v.Name, v.CharCode, v.Value:gsub(',', '.')))
     end
-  end
-
-  local i = table.find(wants, 'RUB')
-  if i then
-    table.insert(founds, 'RUB')
-    table.insert(r, i, self.fmt({
-      Nominal = 1,
-      Name = 'Российский рубль',
-      Value = '1'
-    }, fmt) .. ' :D')
   end
 
   return r, resp.Date, founds
 end
 
-function rub.msg(C, msg)
-  local wants = {'USD', 'EUR', table.unpack(msg.args)}
-  for i = 1, #wants do wants[i] = wants[i]:upper() end
-
-  local v, d, f = rub:course(wants, '%d %s - %f ₽')
-  local nf = {}
-
-  for i = 1, #wants do
-    if not table.find(f, wants[i]) then
-      table.insert(nf, wants[i])
-    end
-  end
-
-  local s = 'Курс на ' .. d .. ':\n' .. table.concat(v, '\n')
-  if #nf > 0 then s = s .. '\n\n' .. 'Не нашлось: ' .. table.concat(nf, ', ') end
-
-  C.api:reply(msg, s .. '\nДанные от Центробанка России')
-end
-
 return {
-  args = '[valute]...',
-  desc = 'ruble course',
-  run = rub.msg
+  run = function(C, msg)
+    local wants = {'USD', 'EUR', table.unpack(msg.args)}
+    for i = 1, #wants do wants[i] = wants[i]:upper() end -- uppercase
+
+    local v, d, f = rub:course(wants)
+    if v == 'error' then
+      return C.api:reply(msg, C.locale:get('error', 'req_err'))
+    end
+
+    local nf = {}
+    for _, i in pairs(wants) do
+      if not table.find(f, i) then table.insert(nf, i) end
+    end
+
+    local s = msg.loc.cur:format(d, table.concat(v, '\n'))
+    if #nf > 0 then s = s .. msg.loc.notf .. table.concat(nf, ',') end
+
+    C.api:reply(msg, s .. msg.loc.prov)
+  end
 }

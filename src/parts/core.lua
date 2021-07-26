@@ -28,8 +28,11 @@ end
 function Core:ev(t, i, name, ...)
   local v = t[i]
   if v.name == name then
-    local succ = pcall(v.fn, self, ...)
-    if not succ then print('event "' .. name .. '" was failed') end
+    local succ, err = pcall(v.fn, self, ...)
+    if not succ then
+      print('event "' .. name .. '" was failed')
+      print(err)
+    end
     if v.type == 'once' then table.remove(t, i) end
   end
 end

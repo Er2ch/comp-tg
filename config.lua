@@ -3,12 +3,17 @@ return {
   owner = 935626920 , -- hehe
   cmds = {
     'eval',
-    'rub',
     'ping',
+    'rub',
+    'start',
   },
   events = {
     'command',
-    'message',
     'ready',
+  },
+  parts = {
+    'locale',
+    'db',
+    'client',
   },
 }
