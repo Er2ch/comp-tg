@@ -38,7 +38,7 @@ local function receiveUpdate(self, update)
        and not to then return end
 
       local args = {}
-      txt = msg.text:sub(#cmd + #(to or {}) + 3)
+      msg.text = msg.text:sub(#cmd + #(to or '') + 3)
       for s in msg.text:gmatch '%S+' do table.insert(args, s) end
 
       msg.cmd  = cmd

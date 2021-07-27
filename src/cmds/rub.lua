@@ -44,7 +44,7 @@ return {
 
     local v, d, f = rub:course(wants)
     if v == 'error' then
-      return C.api:reply(msg, C.locale:get('error', 'req_err'))
+      return C.api:reply(msg, C.locale:get('error', 'req_err', msg.l))
     end
 
     local nf = {}

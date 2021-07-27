@@ -14,10 +14,10 @@ function Locale:get(cat, k, lang)
   assert(k,   'Give key')
   lang = lang or self.main
 
-  local v = self[lang][cat][k]
+  local v = (self[lang] or {})[cat]
   if not v then
-    return self[self.main][cat][k]
-  else return v end
+    return self[Locale.main][cat][k]
+  else return v[k] end
 end
 
 return function(C)
