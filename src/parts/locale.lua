@@ -16,7 +16,7 @@ function Locale:get(cat, k, lang)
 
   local v = (self[lang] or {})[cat]
   if not v then
-    return self[Locale.main][cat][k]
+    return self[self.main][cat][k]
   else return v[k] end
 end
 
