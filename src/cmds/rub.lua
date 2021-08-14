@@ -10,8 +10,9 @@ local rub = {
 }
 
 function rub:course(wants)
-  local resp, succ = self.tools.requ(self.url)
+  local resp, succ = self.tools._req(self.url, 'GET')
   if not succ then return 'err' end
+  resp = self.tools.json.decode(resp or '{}')
 
   resp = resp.ValCurs
   table.insert(resp.Valute, {

@@ -22,7 +22,7 @@
       local cid = C.config.owner
       api:forward(cid, msg.chat.id, msg.message_id, false)
       api:send(cid, err)
-      api:reply(msg, msg.locale.error.not_suc)
+      api:reply(msg, C.locale:get('error', 'not_suc', l))
     end
   end
 end
