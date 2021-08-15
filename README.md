@@ -1,5 +1,7 @@
 # Computer bot
 
+Now, GitHub contains mirror, original is [here](https://gitdab.com/er2/comp-tg).
+
 This bot is a reborn of [this](https://github.com/Er2pkg/computer) bot,
 but on Telegram.
 
