@@ -3,15 +3,23 @@
   -- Zlib License
 --]]
 
-local tools =require 'etc.api.tools'
-local json = require 'etc.json'
-local events=require 'etc.events'
-local api = {
-  request = function(s, ...) return tools.request(s.token, ...) end,
+local tools  = require 'etc.api.tools'
+local json   = require 'etc.json'
+local events = require 'etc.events'
+local api    = {
+  request    = function(s, ...) return tools.request(s.token, ...) end
 }
 api.__index = api -- Make class
+events(api)       -- inheritance
 
-events(api) -- inheritance
+-- parse arguments
+local function argp(cid, rmp, pmod, dwp)
+  return
+    type(cid) == 'table' and cid.chat.id or cid,
+    type(rmp) == 'table' and json.encode(rmp) or rmp,
+    (type(pmod) == 'boolean' and pmod == true) and 'MarkdownV2' or pmod,
+    dwp == nil and true or dwp
+end
 
 -- Getters without params
 
@@ -25,12 +33,9 @@ function api:getChat(cid) return self:request('getChat', {chat_id = cid}) end
 -- Setters
 
 function api:send(msg, txt, pmod, dwp, dnot, rtmid, rmp)
-  rmp = type(rmp) == 'table' and json.encode(rmp) or rmp
-  msg = (type(msg) == 'table' and msg.chat and msg.chat.id) and msg.chat.id or msg
-  pmod = (type(pmod) == 'boolean' and pmod == true) and 'markdown' or pmod
-  if dwp == nil then dwp = true end
+  msg, rmp, pmod, dwp = argp(msg, rmp, pmod, dwp)
 
-  if txt and #txt > 4096 then
+  if txt and #txt >= 4096 then
     txt = txt:sub(0, 4092) .. '...'
   end
 
@@ -46,10 +51,7 @@ function api:send(msg, txt, pmod, dwp, dnot, rtmid, rmp)
 end
 
 function api:reply(msg, txt, pmod, dwp, rmp, dnot)
-  if type(msg) ~= 'table' or not msg.chat or not msg.chat.id or not msg.message_id then return false end
-  rmp = type(rmp) == 'table' and json.encode(rmp) or rmp
-  pmod = (type(pmod) == 'boolean' and pmod == true) and 'markdown' or pmod
-
+  _, rmp, pmod, dwp = argp(msg, rmp, pmod, dwp)
   return self:request('sendMessage', {
     chat_id = msg.chat.id,
     text = txt,
@@ -70,9 +72,33 @@ function api:forward(cid, frcid, mid, dnot)
   })
 end
 
+function api:sendPhoto(cid, f, cap, pmod, dnot, rtmid, rmp)
+  cid, rmp, pmod = argp(cid, rmp, pmod)
+  return self:request('sendPhoto', {
+    chat_id = cid,
+    caption = cap,
+    parse_mode = pmod,
+    disable_notification = dnot,
+    reply_to_message_id = rtmid,
+    reply_markup = rmp,
+  }, { photo = f })
+end
+
+function api:sendDocument(cid, f, cap, pmod, dnot, rtmid, rmp)
+  cid, rmp, pmod = argp(cid, rmp, pmod)
+  return self:request('sendDocument', {
+    chat_id = cid,
+    caption = cap,
+    parse_mode = pmod,
+    disable_notification = dnot,
+    reply_to_message_id = rtmid,
+    reply_markup = rmp,
+  }, { document = f })
+end
+
 function api:sendPoll(cid, q, opt, anon, ptype, mansw, coptid, expl, pmode, oper, cdate, closed, dnot, rtmid, rmp)
+  cid, rmp, pmode = argp(cid, rmp, pmode)
   opt = type(opt) == 'string' and opt or json.encode(opt)
-  rmp = type(rmp) == 'table' and json.encode(rmp) or rmp
   anon = type(anon) == 'boolean' and anon or false
   mansw = type(mansw) == 'boolean' and mansw or false
   return self:request('sendPoll', {
@@ -91,6 +117,16 @@ function api:sendPoll(cid, q, opt, anon, ptype, mansw, coptid, expl, pmode, oper
     disable_notification = dnot,
     reply_to_message_id = rtmid,
     reply_markup = rmp,
+  })
+end
+
+function api:answerCallback(id, txt, alrt, url, ctime)
+  return self:request('answerCallbackQuery', {
+    callback_query_id = id,
+    text = txt,
+    show_alert = alrt,
+    url = url,
+    cache_time = ctime,
   })
 end
 

@@ -89,13 +89,13 @@ function tools.req(url, par, f, dbg)
   return res, true
 end
 
-function tools.request(token, endpoint, param, f, dbg)
+function tools.request(token, endpoint, param, f)
   assert(token, 'Provide token!')
   assert(endpoint, 'Provide endpoint!')
 
   local url = 'https://api.telegram.org/bot' ..token.. '/' ..endpoint
 
-  -- dbg = true
+  dbg = true
   local resp = tools.req(url, param, f, dbg)
   return resp, resp.ok or false
 end

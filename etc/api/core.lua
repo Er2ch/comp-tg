@@ -27,8 +27,6 @@ function api:getUpdates(lim, offs, tout, allowed)
 end
 
 local function receiveUpdate(self, update)
-  if update then self:emit('update', update) end
-
   if update.message then
     local msg = update.message
     local cmd, to = tools.fetchCmd(msg.text or '')
@@ -72,7 +70,10 @@ function api:_getUpd(lim, offs, ...)
   if not ok or not u or (u and type(u) ~= 'table') or not u.result then return end
   for _, v in pairs(u.result) do
     offs = v.update_id + 1
-    receiveUpdate(self, v)
+    if type(v) == 'table' then
+      self:emit('update', v)
+      receiveUpdate(self, v)
+    end
   end
   return offs
 end
@@ -92,7 +93,7 @@ function api:run(lim, offs, tout, al)
   tout = tonumber(tout) or 0
 
   self.runs = true
-  self:emit('ready')
+  self:emit 'ready'
 
   self.co = coroutine.create(api._loop)
   coroutine.resume(self.co, self, lim, tout, offs, al)
@@ -123,6 +124,9 @@ return function(opts)
   if type(opts) == 'table' then
     if opts.token then self.token = opts.token end
     if opts.norun then self.nr = true end
+    if not opts.noinl then
+      self.inline = require('etc.api.inline')(self)
+    end
   end
 
   return self
