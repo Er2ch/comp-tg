@@ -1,0 +1,4 @@
+[submodule "etc/api"]
+	path = etc/api
+	url = https://gitdab.com/er2/tg-api-lua
+
