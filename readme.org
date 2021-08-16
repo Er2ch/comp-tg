@@ -1,0 +1,38 @@
+* Computer bot
+
+Now, GitHub contains *mirror*, original is *[[https://gitdab.com/er2/comp-tg][here]]*.
+
+-----
+
+This bot is a continue of [[https://github.com/Er2pkg/computer][my Discord bot]],
+but on Telegram.
+
+Bot uses an OOP-style of Lua
+as [[https://is.gd/f0Vadk][described on Wikipedia]].
+
+Also bot reads client language and automatically loads needing locale.
+
+Maybe I rewrite bot's core to C but there already so many Lua code.
+
+* Installation
+
+[[https://alpinelinux.org][Alpine linux]], root:
+
+  + Enable community repo (described in wiki)
+
+  + Install lua and tools: ~apk add sudo git lua5.3 luarocks openssl-dev~
+
+  + Install LuaSec for https requests: ~luarocks-5.3 install luasec~
+
+  + Create user: ~adduser user~
+
+    and login to this user
+
+  + Clone repo: ~git clone --recursive https://gitdab.com/er2/comp-tg~
+
+    and enter ~cd comp-tg~
+
+  + Change token and owner in *config.lua*
+
+  + Run: ~lua5.3 init.lua~
+

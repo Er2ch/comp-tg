@@ -13,7 +13,6 @@ return {
   },
   parts = {
     'locale',
-    'db',
     'client',
   },
 }
