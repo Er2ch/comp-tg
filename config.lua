@@ -3,6 +3,7 @@ return {
   owner = 935626920 , -- hehe
   cmds = {
     'eval',
+    'reload',
     'ping',
     'rub',
     'start',
@@ -10,6 +11,7 @@ return {
   events = {
     'command',
     'ready',
+    'inlineQuery',
   },
   parts = {
     'locale',
