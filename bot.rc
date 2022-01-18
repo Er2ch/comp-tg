@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+# My bot service
+
+# CHANGE VALUES TO MATCH YOURS
+
+name="mybot"
+description="My bot"
+command="/home/er2/comp-tg/start.sh"
+command_args=""
+command_user="er2:er2"
+command_background=true
+
+depend() {}
+
+pidfile="/run/${RC_SVCNAME}.pid"
