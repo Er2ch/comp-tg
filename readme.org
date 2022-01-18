@@ -1,18 +1,21 @@
 * Computer bot
 
-Now, GitHub contains *mirror*, original is *[[https://gitdab.com/er2/comp-tg][here]]*.
+Original is *[[https://gitdab.com/er2/comp-tg][here]]* and on my private server.
+Mirrors can update irregularly.
 
 -----
 
-This bot is a continue of [[https://github.com/Er2pkg/computer][my Discord bot]],
-but on Telegram.
+This is a bot for Telegram.
+It haven't got much possibilities,
+but this code can be used in other bots.
+
+Bot can use locale of Telegram client (unlike much bots)
+and use it or fallback to English.
 
 Bot uses an OOP-style of Lua
 as [[https://is.gd/f0Vadk][described on Wikipedia]].
 
-Also bot reads client language and automatically loads needing locale.
-
-Maybe I rewrite bot's core to C but there already so many Lua code.
+Maybe I will rewrite bot's core to C but here already so many Lua code.
 
 * Installation
 
@@ -20,13 +23,13 @@ Maybe I rewrite bot's core to C but there already so many Lua code.
 
   + Enable community repo (described in wiki)
 
-  + Install lua and tools: ~apk add sudo git lua5.3 luarocks openssl-dev~
+  + Install lua and tools: ~apk add doas git lua5.3-dev luarocks musl-dev gcc openssl-dev~
 
   + Install LuaSec for https requests: ~luarocks-5.3 install luasec~
 
   + Create user: ~adduser user~
 
-    and login to this user
+    setup it (add to doas) and login to this user
 
   + Clone repo: ~git clone --recursive https://gitdab.com/er2/comp-tg~
 
@@ -34,5 +37,8 @@ Maybe I rewrite bot's core to C but there already so many Lua code.
 
   + Change token and owner in *config.lua*
 
-  + Run: ~lua5.3 init.lua~
+  + Add service ~doas cp bot.rc /etc/init.d/mybot && doas chmod +x /etc/init.d/mybot~
 
+  + Configure it ~doas vi /etc/init.d/mybot~ (change user)
+
+  + Start it ~doas service mybot start~
