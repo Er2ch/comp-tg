@@ -17,6 +17,14 @@ end
 function events:on(n,f)   self:_add('on', n,f)   end
 function events:once(n,f) self:_add('once', n,f) end
 
+function events:off(f)
+  for k, v in pairs(self._ev_) do
+    if v.fn == f then
+      table.remove(self._ev_, k)
+    end
+  end
+end
+
 function events:_ev(t, i, name, ...)
   local v = t[i]
   if v.name == name then
