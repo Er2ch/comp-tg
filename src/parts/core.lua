@@ -2,6 +2,7 @@
 
 local Core = {
   config = config,
+  loaded = 0,
 }
 (require 'etc.events')(Core) -- add events
 
@@ -13,8 +14,7 @@ function Core:load(what)
 
     print(('Loading %s (%d / %d) %s...'):format(what:sub(0, -2), i, s, v))
     -- Lint
-    if true then 
-    --pcall(require, 'src.'.. what ..'.'.. v) then
+    if pcall(require, 'src.'.. what ..'.'.. v) then
       local a=require('src.'.. what ..'.'.. v)
       if     what == 'events' then self.api:on(v, a)
       elseif what == 'cmds'   then self.cmds[v] = a
@@ -23,6 +23,7 @@ function Core:load(what)
     else print 'fail' end
   end
   print(('Loaded %d %s'):format(s, what))
+  self.loaded = os.time()
 end
 
 function Core:ev(t, i, name, ...)
@@ -42,6 +43,12 @@ function Core:init()
 
   print 'Done!'
   self:emit 'ready'
+end
+
+function Core:stop()
+  self.api:destroy()
+  print 'Stopped'
+  print('Uptime: '.. os.time() - self.loaded.. ' seconds')
 end
 
 Core:init()
