@@ -10,7 +10,7 @@ return {
     package.loaded[path] = nil
     local err, m = pcall(require, path)
     C.api:reply(msg, ('Reloaded. %s (%s)'):format(
-      err and 'Error:' or 'No errors',
+      not err and 'Error:' or 'Result:',
       m
     ))
   end
