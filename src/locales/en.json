@@ -17,7 +17,7 @@
     "ping": {
       "desc": "ping pong",
 
-      "pat": "Pong! %ds. Uptime: %d days (%dh, %dm.)"
+      "pat": "Pong! %ds. Uptime: %.1f days (%.1fh, %.1fm.)"
     },
     "rub": {
       "args": "[valute]...",
