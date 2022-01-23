@@ -1,4 +1,4 @@
-﻿local config = require 'config'
+local config = require 'config'
 
 local Core = {
   config = config,
@@ -14,8 +14,9 @@ function Core:load(what)
 
     print(('Loading %s (%d / %d) %s...'):format(what:sub(0, -2), i, s, v))
     -- Lint
-    if pcall(require, 'src.'.. what ..'.'.. v) then
-      local a=require('src.'.. what ..'.'.. v)
+    local e, a = pcall(require, 'src.'.. what ..'.'.. v)
+    print(e, a)
+    if e then
       if     what == 'events' then self.api:on(v, a)
       elseif what == 'cmds'   then self.cmds[v] = a
       elseif what == 'parts'  then a(self)
