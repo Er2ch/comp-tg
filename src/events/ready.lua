@@ -27,17 +27,20 @@ end
 
 return function(C, api)
   C:load 'cmds'
-  local a = {}
-  for k, v in pairs(C.cmds) do
-    if not (v.private or v.hide) then
-      local cmd = C.locale:get('cmds', k) or {}
-      table.insert(a, {
-        command = k,
-        description = (cmd.args and cmd.args .. ' - ' or '') .. (cmd.desc or C.locale:get('cmds', 'not_des'))
-      })
+  local a
+  for _, lang in pairs(C.locale.list) do
+    a = {}
+    for k, v in pairs(C.cmds) do
+      if not (v.private or v.hide) then
+        local cmd = C.locale:get('cmds', k, lang) or {}
+        table.insert(a, {
+          command = k,
+          description = (cmd.args and cmd.args .. ' - ' or '') .. (cmd.desc or C.locale:get('cmds', 'not_des'))
+        })
+      end
     end
+    api:setMyCommands(a, lang)
   end
-  api:setMyCommands(a)
 
 --[[
   a = {'levels', }
