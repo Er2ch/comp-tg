@@ -10,6 +10,4 @@ command_args=""
 command_user="er2:er2"
 command_background=true
 
-depend() {}
-
 pidfile="/run/${RC_SVCNAME}.pid"
