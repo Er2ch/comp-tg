@@ -23,6 +23,15 @@ function rub:course(wants)
     Name = 'Российский рубль',
     Value = '1'
   })
+  local uah = table.findV(resp.Valute, {CharCode = 'UAH'})
+  table.insert(resp.Valute, {
+    ID = 'R02000',
+    NumCode = '200',
+    CharCode = 'SHT',
+    Nominal = 1,
+    Name = 'Штаны',
+    Value = ('%f'):format(tonumber(uah.Value:gsub(',', '.'), nil) / uah.Nominal * 40)
+  })
 
   wants = type(wants) == 'table' and wants or {}
   local r, founds = {}, {}

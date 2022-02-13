@@ -7,11 +7,12 @@ return {
     end
 
     local path = 'src.'..cat..'.'..sub
+    C.api:off(package.loaded[path])
     package.loaded[path] = nil
-    local err, m = pcall(require, path)
+    local suc, m = pcall(require, path)
 
-    if not err then return C.api:reply(msg, 'Reload failed. ' .. m)
-    elseif cat == 'events' then C.api:off(m); C.api:on(sub, m)
+    if not suc then return C.api:reply(msg, 'Reload failed. ' .. m)
+    elseif cat == 'events' then C.api:on(sub, m)
     elseif cat == 'cmds'   then C.cmds[sub] = m
     elseif cat == 'parts'  then m(C)
     end

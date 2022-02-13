@@ -5,14 +5,20 @@
 end
 
 function table.find(t, w)
-  local i
-  for k,v in pairs(t) do
-    if v == w then
-      i = k
-      break
-    end
+  for _,v in pairs(t) do
+    if v == w then return v end
   end
-  return i
+end
+
+function table.findV(t, w)
+  local b
+  for _,v in pairs(t) do
+    for k,x in pairs(w) do
+      if x ~= v[k] then b=1; break end
+    end
+    if b then b = nil
+    else return v end
+  end
 end
 
 function dump(t, d)
