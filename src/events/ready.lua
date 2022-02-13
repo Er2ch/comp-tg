@@ -1,4 +1,4 @@
-﻿function table.indexOf(t, w)
+function table.indexOf(t, w)
   local i = {}
   for k,v in pairs(t) do i[v] = k end
   return i[w]

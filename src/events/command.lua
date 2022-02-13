@@ -1,4 +1,4 @@
-﻿return function(C, api, msg)
+return function(C, api, msg)
   local cmd = C.cmds[msg.cmd]
   local owner = msg.from.id == C.config.owner
   local l = msg.from.language_code
