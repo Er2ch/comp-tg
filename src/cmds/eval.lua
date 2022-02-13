@@ -39,7 +39,7 @@ return {
       api = owner and C.api or nil,
     }
     for k,v in pairs(env) do t[k] = v end
-    local e, err = load(table.concat(msg.args, ' '), 'eval', 't', t)
+    local e, err = load(C.api.unparseArgs(msg.args), 'eval', 't', t)
     xpcall(function()
       if err then error(err) end
       e = tostring(e() or '...')

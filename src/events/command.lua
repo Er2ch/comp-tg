@@ -15,6 +15,7 @@
     api:send(msg, C.locale:get('error', 'adm_cmd', l))
 
   else
+    if cmd.useQArgs then msg.args = api.parseArgs(api.unparseArgs(msg.args)) end
     msg.loc = C.locale:get('cmds', msg.cmd, l)
     local succ, err = pcall(cmd.run, C, msg, owner)
     if not succ then
