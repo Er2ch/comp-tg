@@ -21,6 +21,10 @@ function table.findV(t, w)
   end
 end
 
+function string.escp(s)
+  return s:gsub('[%^%$%%%(%)%.%[%]%*%+%-%?]', '%%%0')
+end
+
 function dump(t, d)
   if not tonumber(d) or d < 0 then d = 0 end
   local c = ''

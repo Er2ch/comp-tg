@@ -39,11 +39,13 @@ return {
       api = owner and C.api or nil,
     }
     for k,v in pairs(env) do t[k] = v end
-    local e, err = load(C.api.unparseArgs(msg.args), 'eval', 't', t)
+    local e, err = load(C.api.unparseArgs(msg.args), 'eval', 'bt', t)
     xpcall(function()
       if err then error(err) end
       e = tostring(e() or '...')
     end, function(err) e = err end)
-    C.api:send(msg, s .. '\n' .. e)
+    s = s ..'\n'.. e
+    s = s:gsub(C.api.token:escp(), '<TOKEN>')
+    C.api:reply(msg, s)
   end
 }
