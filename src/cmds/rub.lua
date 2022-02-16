@@ -36,6 +36,15 @@ function rub:course(wants)
   wants = type(wants) == 'table' and wants or {}
   local r, founds = {}, {}
 
+  if table.find(wants, 'HELP')
+  or table.find(wants, 'ALL')
+  then
+    for _, v in pairs(resp.Valute) do
+      table.insert(r, ('%d %s (%s) = %f Руб.'):format(v.Nominal, v.Name, v.CharCode, v.Value:gsub(',', '.')))
+    end
+    return r, resp.Date, wants
+  end
+
   for i = 1, #resp.Valute do
     local v = resp.Valute[i]
     if table.find(wants, v.CharCode) then
