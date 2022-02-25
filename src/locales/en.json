@@ -28,6 +28,8 @@
       "prov": "\nData provided from central bank of Russia."
     },
     "start": {
+      "desc": "getting started",
+
       "msg": "Hi! I'm Computer - an open-source bot.\nIf you looking for source code: https://gitdab.com/er2/comp-tg"
     }
   }
