@@ -42,6 +42,8 @@ end
 function Core:init()
   self:load 'parts'
 
+  utf8 = require 'etc.utf8'
+
   print 'Done!'
   self:emit 'ready'
 end
