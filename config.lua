@@ -12,6 +12,7 @@ return {
     'command',
     'ready',
     'inlineQuery',
+    'message',
   },
   parts = {
     'locale',

@@ -26,6 +26,9 @@
       "cur": "Currency at %s:\n%s",
       "notf": "\nNot found: ",
       "prov": "\nData provided from central bank of Russia."
+    },
+    "start": {
+      "msg": "Hi! I'm Computer - an open-source bot.\nIf you looking for source code: https://gitdab.com/er2/comp-tg"
     }
   }
 }
