@@ -19,10 +19,12 @@ reg = {
 (api, msg) =>
   if msg.text
     msg.text = utf8.lower ' '.. msg.text ..' '
-    t = ''
+    t = msg.text
     for _, v in pairs reg
-      if utf8.match msg.text, '%s+'.. v[1] ..'%s+'
-        t ..= "#{v[2]} "
+      t = utf8.gsub t, '%s+'.. v[1] ..'%s+', ' '.. v[2] ..' '
 
-    api\reply msg, t if t ~= ''
+    api\reply msg, t if t ~= msg.text
+  elseif msg.sticker
+    if msg.sticker.file_unique_id == 'AgADwAADcpO1DQ'
+      api\reply msg, 'редебало'
   return

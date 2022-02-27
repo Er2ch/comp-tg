@@ -32,7 +32,7 @@ export dump = (t, d) ->
     elseif type(v) == 'userdata'
       v = '<USERDATA>'
 
-    c ..= ('%s%s = %s\n')\format (' ')\rep d, k, v
+    c ..= ('%s%s = %s\n')\format (' ')\rep(d), k, v
   c
 
 (api) =>

@@ -16,8 +16,9 @@ rub =
     res, suc = @tools._req @url, 'GET'
     return 'err' if not suc
     res = @tools.json.decode res or '{}'
-
     res = res.ValCurs
+    return 'err' if not res
+
     table.insert res.Valute, {
       ID: 'R01000'
       NumCode: '001'
@@ -58,7 +59,7 @@ rub =
       wants[i] = wants[i]\upper!
 
     v, d, f = rub\course wants
-    if v == 'error'
+    if v == 'err'
       return @api\reply msg, @locale\get 'error', 'req_err', msg.l
 
     nf = {}
