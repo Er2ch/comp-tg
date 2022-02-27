@@ -2,3 +2,6 @@
 	path = etc/api
 	url = https://gitdab.com/er2/tg-api-lua
 
+[submodule "etc/utf8"]
+	path = etc/utf8
+	url = https://github.com/Stepets/utf8.lua
