@@ -16,6 +16,14 @@ reg = {
   {'чё%?*',           'ничё'}
 }
 
+stick = {
+  {
+    'AgADwAADcpO1DQ'
+    'редебало'
+    'CAACAgIAAx0CUY2umQACFItiHHUg6w_MPu6Vs8k76cwn4OIHNQACwAADcpO1DVbNTDlmHOWMIwQ'
+  }
+}
+
 (api, msg) =>
   if msg.text
     msg.text = utf8.lower ' '.. msg.text ..' '
@@ -25,6 +33,10 @@ reg = {
 
     api\reply msg, t if t ~= msg.text
   elseif msg.sticker
-    if msg.sticker.file_unique_id == 'AgADwAADcpO1DQ'
-      api\reply msg, 'редебало'
+    for k, v in pairs stick
+      if msg.sticker.file_unique_id == v[1]
+        if math.random! <= 0.5
+          api\reply msg, v[2]
+        else api\sendSticker msg, v[3] --, _, _, _, msg.message_id
+
   return
